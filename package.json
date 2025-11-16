@@ -2,6 +2,10 @@
   "name": "hypermind-ai",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo 'No build step required for simple Node.js app' || true"
+  },
   "dependencies": {
     "openai": "4.52.0"
   }
