@@ -3,17 +3,17 @@ import { loadMemory, saveMemory } from "../src/memory.js";
 import { analyzeMessage } from "../src/hypermind-ai.js";
 import { monitorStats } from "../src/monitor.js";
 
-export const config = {
-  runtime: "edge"
-};
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
-export default async function handler(req) {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Método inválido" });
+  }
+
   try {
-    const { message } = await req.json();
-
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    const { message } = req.body;
 
     const memory = loadMemory();
     const aiAnalysis = analyzeMessage(message, memory);
@@ -33,15 +33,12 @@ export default async function handler(req) {
 
     const monitor = monitorStats(message, response);
 
-    return new Response(
-      JSON.stringify({ response, monitor }),
-      { status: 200 }
-    );
+    res.status(200).json({
+      response,
+      monitor
+    });
 
   } catch (e) {
-    return new Response(
-      JSON.stringify({ error: e.message }),
-      { status: 500 }
-    );
+    res.status(500).json({ error: e.message });
   }
 }
