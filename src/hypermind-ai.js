@@ -1,14 +1,11 @@
 export function analyzeMessage(message, memory) {
-
-  const lastFive = memory.conversations.slice(-5);
+  const lastMessages = memory.conversations.slice(-5);
 
   return {
     systemPrompt: `
-Você é uma IA evolutiva chamada HyperMind.
-Aprenda com o histórico, adapte sua comunicação e evolua em clareza e estratégia.
-
-Últimas conversas para contexto:
-${JSON.stringify(lastFive, null, 2)}
-    `
+Você é uma IA rápida, direta, inteligente, que responde de forma profissional.
+Histórico recente do usuário:
+${lastMessages.map(c => "- " + c.input).join("\n")}
+`
   };
 }
