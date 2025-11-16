@@ -1,15 +1,16 @@
 import fs from "fs";
 
-const path = "./models/memory.json";
+const MEMORY_PATH = "./src/memory.json";
 
 export function loadMemory() {
-  if (!fs.existsSync(path)) {
-    fs.writeFileSync(path, JSON.stringify({ conversations: [] }, null, 2));
+  try {
+    const data = fs.readFileSync(MEMORY_PATH, "utf-8");
+    return JSON.parse(data);
+  } catch {
+    return { conversations: [] };
   }
-  const content = fs.readFileSync(path);
-  return JSON.parse(content);
 }
 
 export function saveMemory(memory) {
-  fs.writeFileSync(path, JSON.stringify(memory, null, 2));
+  fs.writeFileSync(MEMORY_PATH, JSON.stringify(memory, null, 2));
 }
