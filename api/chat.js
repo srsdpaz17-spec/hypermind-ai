@@ -3,25 +3,21 @@ import { loadMemory, saveMemory } from "../src/memory.js";
 import { analyzeMessage } from "../src/hypermind-ai.js";
 import { monitorStats } from "../src/monitor.js";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+export const config = {
+  runtime: "edge"
+};
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método inválido" });
-  }
-
+export default async function handler(req) {
   try {
-    const { message } = req.body;
+    const { message } = await req.json();
 
-    // memória carregada
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+
     const memory = loadMemory();
-
-    // análise inteligente da IA
     const aiAnalysis = analyzeMessage(message, memory);
 
-    // chamada do modelo
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -32,19 +28,20 @@ export default async function handler(req, res) {
 
     const response = completion.choices[0].message.content;
 
-    // salva aprendizado
     memory.conversations.push({ input: message, output: response });
     saveMemory(memory);
 
-    // monitoramento
     const monitor = monitorStats(message, response);
 
-    res.status(200).json({
-      response,
-      monitor
-    });
+    return new Response(
+      JSON.stringify({ response, monitor }),
+      { status: 200 }
+    );
 
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    return new Response(
+      JSON.stringify({ error: e.message }),
+      { status: 500 }
+    );
   }
 }
