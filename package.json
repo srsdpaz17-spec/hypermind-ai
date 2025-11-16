@@ -1,12 +1,8 @@
 {
-  "name": "hyper-mind",
+  "name": "hypermind-ai",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "node api/chat.js"
-  },
   "dependencies": {
-    "openai": "4.0.0",
-    "dotenv": "16.4.4"
+    "openai": "4.52.0"
   }
 }
