@@ -3,3 +3,5 @@
 OPENAI_API_KEY
 keys/
 node_modules/
+.vercel
+.env*
