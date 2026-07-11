@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients Client[]
+  tasks   Task[]
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  company   String?
+  status    String   @default("Lead")
+  createdAt DateTime @default(now())
+
+  ownerId String
+  owner   User @relation(fields: [ownerId], references: [id])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("PENDING")
+  priority    String   @default("NORMAL")
+  createdAt   DateTime @default(now())
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  prompt    String
+  response  String
+  createdAt DateTime @default(now())
+}
+
+model Automation {
+  id        String   @id @default(cuid())
+  name      String
+  active    Boolean  @default(true)
+  type      String
+  createdAt DateTime @default(now())
+}

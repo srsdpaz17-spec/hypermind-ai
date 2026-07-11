@@ -1,0 +1,1 @@
+"""Domain repository interfaces package."""
